@@ -86,7 +86,7 @@ var main = function() {
     });
 
     $('#addQuestionToDatabase').on('click', function(event) {
-
+      
         if ($('#questionInput').val() !== '') {
 
             var question = $('#questionInput').val();
@@ -109,41 +109,6 @@ var main = function() {
         return false;
     });
 
-    // $('#getQuestionFromDatabase').on('click', function(event) {
-
-    //     $.get('question', function(res) {
-    //         if (res.length === 0) {
-    //             $('#answer_Two .result_Two').text('Database is Empty!');
-    //         } else {
-    //             $('#answer_Two .result_Two').text('Question: ' + res.Question + " ID: " + res._id);
-    //         }
-    //     });
-    //     return false;
-    // });
-
-    // $('#checkAnswerToQuestionInDatabase').on('click', function(event) {
-
-    //     if ($('#idInput').val() !== '') {
-    //         var ID = $('#idInput').val();
-    //         var answer = $('#answerInputTwo').val();
-
-    //         $.ajax({
-    //             type: "POST",
-    //             url: 'answer',
-    //             data: JSON.stringify({
-    //                 "ID": ID,
-    //                 "Answer": answer
-    //             }),
-    //             success: function(res) {
-    //                 $('#answer_Three .result_Three').text('Correct: ' + res.correct);
-    //             },
-    //             contentType: "application/json",
-    //             dataType: 'json'
-    //         });
-    //     }
-    //     return false;
-    // });
-
     $('#getScoreFromDatabase').on('click', function(event) {
 
         $.get('score', function(res) {
@@ -165,18 +130,16 @@ var main = function() {
             $('#answerInputFromAnswerForm').val('');
             var question = this.Question;
             var id = this._id;
-            $.get('question', {question, id}, function(res) {
+            $.get('question', {
+                question,
+                id
+            }, function(res) {
                 socket.emit('getQuestion', res._id, res.Question);
                 question(res.Question);
                 id(res._id);
-                // if (res.length === 0) {
-                //     $('#answer_Two .result_Two').text('Database is Empty!');
-                // } else {
-                //     $('#answer_Two .result_Two').text('Question: ' + res.Question + " ID: " + res._id);
-                // }
             });
             return false;
-        }
+        };
     }
 
     // Activates knockout.js
