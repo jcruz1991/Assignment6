@@ -72,7 +72,7 @@ var main = function() {
                 });
             }
             return false;
-        }
+        };
 
         self.submitUserName = function() {
             if ($('#usernameInput').val() !== '') {
@@ -85,7 +85,7 @@ var main = function() {
                 $('#scoreArea').show();
             }
             return false;
-        }
+        };
 
         self.checkAnswer = function() {
             if ($('#idInput').val() !== '') {
@@ -106,13 +106,13 @@ var main = function() {
                 });
             }
             return false;
-        }
+        };
 
         self.getQuestion = function() {
             $('#answer_Two .correctAnswer').empty();
             $('#answerInputFromAnswerForm').val('');
             var question = this.Question;
-            var id = this._id
+            var id = this._id;
             $.get('question', {question, id}, function(res) {
                 socket.emit('getQuestion', res._id, res.Question);
                 if (res.length === 0) {
@@ -123,7 +123,7 @@ var main = function() {
                 }
             });
             return false;
-        }
+        };
     }
 
     // Activates knockout.js
