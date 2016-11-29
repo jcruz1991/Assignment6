@@ -21,35 +21,34 @@
                     <div class="field">
                         <input type="text" name='usernameInput' id="usernameInput" placeholder="Enter Username...">
                     </div>
-                    <button class="ui fluid primary button" id="getUsername">Submit Username</button>
+                    <button data-bind="click: submitUserName" class="ui fluid primary button">Submit Username</button>
                 </div>
             </div>
 
             <div class="ui small form">
-                <p>
-                    <h2 class="ui center aligned teal image header">Users Online</h2></p>
+                <p><h2 class="ui center aligned teal image header">Users Online</h2></p>
                 <ul id="users"></ul>
             </div>
             <div id="scoreArea">
                 <h2 class="ui center aligned teal image header">Score</h2>
-                <p id="right"></p>
-                <p id="wrong"></p>
+                <p id="right">Right: <span data-bind="text: right"></span></p>
+                <p id="wrong">Wrong: <span data-bind="text: wrong"></span></p>
             </div>
-            <button data-bind="click: getQuestion" class="ui primary button">Start New Round</button>
+             <button data-bind="click: getQuestion" class="ui primary button">Start New Round</button>
         </div>
         <div class="column" id="answerForm">
             <div>
                 <section id="answer_Two">
                     <p class="result_Two_ID"><span data-bind="text: _id"></span></p>
                     <p class="result_Two_Question"><span data-bind="text: Question"></span></p>
-                    <p class="correctAnswer"></p>
+                    <p class="correctAnswer"><span data-bind="text: correctAnswer"></span></p>
                 </section>
             </div>
             <div class="ui large form" id="questionForm">
                 <div class="ui stacked segment" id="userInputDiv">
                     <div class="field">
                         <input type="text" name='answerToCheck' id="answerInputFromAnswerForm" placeholder="Enter Answer...">
-                        <button class="ui fluid primary button" id="answerToCheckButton">Submit Answer</button>
+                        <button data-bind="click: checkAnswer" class="ui fluid primary button">Submit Answer</button>
                     </div>
                 </div>
             </div>
@@ -75,7 +74,7 @@
                             <input type="text" name="answerInput" id="answerInput" placeholder="Answer to question...">
                         </div>
                     </div>
-                    <button class="ui fluid primary button" id="addQuestionToDatabase">Submit Question And Answer</button>
+                    <button data-bind="click: submitQuestionToDatabase" class="ui fluid primary button">Submit Question And Answer</button>
                 </div>
             </div>
         </div>
@@ -90,5 +89,4 @@
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="app.js"></script>
 </footer>
-
 </html>

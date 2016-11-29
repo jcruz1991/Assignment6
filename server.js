@@ -187,6 +187,8 @@ app.post('/answer', function(req, res) {
             if (questions[index]._id == req.body.ID && questions[index].Answer == req.body.Answer) {
                 client.incr('right', function(err, result) {});
                 res.json({
+                    "right": req.body.right,
+                    "wrong": req.body.wrong,
                     "correct": "true"
                 });
                 found = -1;
@@ -197,6 +199,8 @@ app.post('/answer', function(req, res) {
         if (found === 0) {
             client.incr('wrong', function(err, result) {});
             res.json({
+                "right": req.body.right,
+                "wrong": req.body.wrong,
                 "correct": "false"
             });
         }

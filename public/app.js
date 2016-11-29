@@ -11,20 +11,6 @@ var main = function() {
         reconnect: true
     });
 
-    // Add New User
-    $('#getUsername').on('click', function(event) {
-        if ($('#usernameInput').val() !== '') {
-            var username = $('#usernameInput').val();
-            socket.emit('join', username);
-            $('#userInputDiv').hide();
-            $('#startNewRound').show();
-            $('#answerForm').show();
-            $('#newQuestionForm').show();
-            $('#scoreArea').show();
-        }
-        return false;
-    });
-
     // Update User List
     socket.on("update-users", function(user) {
         $("#users").empty();
@@ -34,6 +20,8 @@ var main = function() {
     });
 
     socket.on("get-question", function(id, question) {
+        $('#answer_Two .correctAnswer').empty();
+        $('#answerInputFromAnswerForm').val('');
         $('#answer_Two .result_Two_ID').text(id);
         $('#answer_Two .result_Two_Question').text('Question: ' + question);
     });
@@ -46,100 +34,96 @@ var main = function() {
         $('#answer_Two .correctAnswer').append("<br>" + user + ":" + answer);
     });
 
-    $('#answerToCheckButton').on('click', function(event) {
-
-        if ($('#idInput').val() !== '') {
-            var ID = $('#answer_Two .result_Two_ID').text();
-            var answer = $('#answerInputFromAnswerForm').val();
-
-            $.ajax({
-                type: "POST",
-                url: 'answer',
-                data: JSON.stringify({
-                    "ID": ID,
-                    "Answer": answer
-                }),
-                success: function(res) {
-                    socket.emit('answer', res.correct);
-                    //$('#answer_Two .result_Two').text('Correct: ' + res.correct);
-                },
-                contentType: "application/json",
-                dataType: 'json'
-            });
-        }
-        return false;
-
-    });
-
-    $('#startNewRound').on('click', function(event) {
-        $('#answer_Two .correctAnswer').empty();
-        $('#answerInputFromAnswerForm').val('');
-        $.get('question', function(res) {
-            socket.emit('getQuestion', res._id, res.Question);
-            if (res.length === 0) {
-                $('#answer_Two .result_Two').text('Database is Empty!');
-            } else {
-                $('#answer_Two .result_Two').text('Question: ' + res.Question + " ID: " + res._id);
-            }
-        });
-        return false;
-    });
-
-    $('#addQuestionToDatabase').on('click', function(event) {
-      
-        if ($('#questionInput').val() !== '') {
-
-            var question = $('#questionInput').val();
-            var answer = $('#answerInput').val();
-
-            $.ajax({
-                type: "POST",
-                url: 'question',
-                data: JSON.stringify({
-                    "Question": question,
-                    "Answer": answer
-                }),
-                success: function(res) {
-                    $('#answer .result').text('Question: ' + res.Question + " Answer: " + res.Answer);
-                },
-                contentType: "application/json",
-                dataType: 'json'
-            });
-        }
-        return false;
-    });
-
-    $('#getScoreFromDatabase').on('click', function(event) {
-
-        $.get('score', function(res) {
-            if (res.length === 0) {
-                $('#answer_Four .result_Two').text('Database is Empty!');
-            } else {
-                $('#answer_Four .result_Four').text('Right: ' + res.right + " Wrong: " + res.wrong);
-            }
-        });
-        return false;
-    });
-
     function QuestionModel() {
-        this.Question = ko.observable("hi");
-        this._id = ko.observable("2");
+        this.Question = ko.observable("");
+        this._id = ko.observable("");
+        this.right = ko.observable("");
+        this.wrong = ko.observable("");
+
+        var right = this.right;
+        var wrong = this.wrong;
+
+        $.get('score', {right, wrong}, function(res) {
+            right(res.right);
+            wrong(res.wrong);
+        });
+
+        this.correctAnswer = ko.observable("");
+        var correctAnswer = this.correctAnswer;
+
+        self.submitQuestionToDatabase = function() {
+            if ($('#questionInput').val() !== '') {
+
+                var question = $('#questionInput').val();
+                var answer = $('#answerInput').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: 'question',
+                    data: JSON.stringify({
+                        "Question": question,
+                        "Answer": answer
+                    }),
+                    success: function(res) {
+                        $('#answer .result').text('Question: ' + res.Question + " Answer: " + res.Answer);
+                    },
+                    contentType: "application/json",
+                    dataType: 'json'
+                });
+            }
+            return false;
+        }
+
+        self.submitUserName = function() {
+            if ($('#usernameInput').val() !== '') {
+                var username = $('#usernameInput').val();
+                socket.emit('join', username);
+                $('#userInputDiv').hide();
+                $('#startNewRound').show();
+                $('#answerForm').show();
+                $('#newQuestionForm').show();
+                $('#scoreArea').show();
+            }
+            return false;
+        }
+
+        self.checkAnswer = function() {
+            if ($('#idInput').val() !== '') {
+                var ID = $('#answer_Two .result_Two_ID').text();
+                var answer = $('#answerInputFromAnswerForm').val();
+                $.ajax({
+                    type: "POST",
+                    url: 'answer',
+                    data: JSON.stringify({
+                        "ID": ID,
+                        "Answer": answer
+                    }),
+                    success: function(res) {
+                        socket.emit('answer', res.correct);
+                    },
+                    contentType: "application/json",
+                    dataType: 'json'
+                });
+            }
+            return false;
+        }
 
         self.getQuestion = function() {
             $('#answer_Two .correctAnswer').empty();
             $('#answerInputFromAnswerForm').val('');
             var question = this.Question;
-            var id = this._id;
-            $.get('question', {
-                question,
-                id
-            }, function(res) {
+            var id = this._id
+            $.get('question', {question, id}, function(res) {
                 socket.emit('getQuestion', res._id, res.Question);
-                question(res.Question);
-                id(res._id);
+                if (res.length === 0) {
+                    question('Database is Empty!');
+                } else {
+                    question(res.Question);
+                    id(res._id);
+                }
             });
             return false;
-        };
+        }
     }
 
     // Activates knockout.js
